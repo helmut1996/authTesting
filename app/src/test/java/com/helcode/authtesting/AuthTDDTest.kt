@@ -1,6 +1,7 @@
 package com.helcode.authtesting
 
 import junit.framework.TestCase.assertEquals
+import org.junit.Assert
 import org.junit.Test
 
 class AuthTDDTest {
@@ -43,11 +44,41 @@ fun login_emptyEmail_returnsFailEvent(){
         val isAuthenticated= userAuthenticationTDD("josubrenes0@gmail.com", "1234hel")
         assertEquals(AuthEvent.INVALID_PASSWORD, isAuthenticated)
     }
-//
-//    login_completeForm_invalidUser_returnsFailEvent
-//    login_nullEmail_returnsException
-//    login_nullPassword_returnsException
-//    login_nullForm_returnsException
-//    login_completeForm_errorLengthPassword_returnsFailEvent
+
+    @Test
+    fun login_completeForm_invalidUser_returnsFailEvent(){
+        val isAuthenticated= userAuthenticationTDD("josubrenes0@gmailcom", "1234hel")
+        assertEquals(AuthEvent.INVALID_USER, isAuthenticated)
+    }
+    @Test(expected = AuthException::class)
+    fun login_nullEmail_returnsException(){
+        val isAuthenticated= userAuthenticationTDD(null, "1234hel")
+        assertEquals(AuthEvent.INVALID_USER, isAuthenticated)
+    }
+
+    @Test
+    fun login_nullPassword_returnsException(){
+        Assert.assertThrows(AuthException:: class.java){
+            print(userAuthenticationTDD("josubrenes0@gmail.com",null))
+        }
+    }
+ @Test
+ fun  login_nullForm_returnsException(){
+    try {
+        val ressult = userAuthenticationTDD(null,null)
+        assertEquals(AuthEvent.NULL_FORM,ressult)
+    }catch (e:Exception){
+        (e as? AuthException)?.let {
+            assertEquals(AuthEvent.NULL_FORM, it.authEvent)
+        }
+    }
+ }
+    @Test
+    fun login_completeForm_errorLengthPassword_returnsFailEvent(){
+        val isAuthenticated= userAuthenticationTDD("josubrenes0@gmailcom", "123")
+        assertEquals(AuthEvent.LENGTH_PASSWORD, isAuthenticated)
+    }
+
+
 
 }
